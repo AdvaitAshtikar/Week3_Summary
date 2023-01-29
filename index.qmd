@@ -1,76 +1,277 @@
 ---
-title: "Weekly Summary Template"
-author: "Author Name"
+title: "Week 3 Summary"
+author: "Advait Ashtikar"
 title-block-banner: true
 title-block-style: default
 toc: true
-format: html
-# format: pdf
+# format: html
+format: pdf
 ---
 
----
+------------------------------------------------------------------------
 
-## Tuesday, Jan 17
+## Tuesday, Jan 24
 
-::: {.callout-important}
+::: callout-important
 ## TIL
-
-Include a _very brief_ summary of what you learnt in this class here. 
 
 Today, I learnt the following concepts in class:
 
-1. Item 1
-1. Item 2
-1. Item 3
+1.  'read.csv' and its uses for reading datasets
+2.  'dplyr' and its use in manipulating datasets
+3.  'ggplot2' used for plotting graphs
 :::
 
-Provide more concrete details here. You can also use footenotes[^footnote] if you like
+### Load Libraries
 
 ```{R results='hide'}
 #| output: false
 library(dplyr)
 library(purrr)
+library(tidyverse)
+library(ggplot2)
+library(ggThemeAssist)
+library(forcats)
 ```
 
+### read.csv
 
-For example: 
-in class we learnt we learnt about the `map` function from the `purrr` package. 
+1.  'read.csv' is a special case of a function 'read.table'
+2.  Other more advanced and efficient methods are:
+    1.  'read_csv' from 'tidyverse'
 
+    2.  'data.table' package in R
 
-```{R results='hide', fig.width=7, fig.height=7}
-par(mfrow=c(3, 3), mar=c(3.5, 3.5, 2, 1), mgp=c(2.4, 0.8, 0))
-map(1:9, function(i)rnorm(1000) %>% hist(., main=i, col=i))
+#### Reading a .csv file from memory:
+
+```{r}
+file_location <- "./data.csv"
+data_from_csv <- read.csv(file_location)
+data_from_csv %>% knitr::kable()
 ```
 
+### dplyr
 
+After we get the data set we start analyzing the data using 'dplyr' and 'ggplot2'. This is known as **Exploratory Data Analysis**
 
-## Thursday, Jan 19
+'dplyr' is used to provide a set of "Verbs" for manipulating data
 
+**Q. What makes a dataset clean?**
 
+**Ans.** 1. Get rid of 'Null', 'NA', 'NaN' and 'missing' entries
 
-::: {.callout-important}
+2.  Making sure that all the values for a particular variable are of the same 'data type', **Eg:** 'double', 'character', or 'logical'
+3.  Each case should be a different value
+
+In general we want the following:
+
+1.  Every variable should have its own value
+2.  Every observation should have its own value
+3.  Every cell, should have a unique value
+
+Examples of Verbs:
+
+-   'dplyr::summary()', 'dplyr::mutate()'
+
+-   'tidyr::pivot_longer()', 'tidyr::pivot_wider()'
+
+-   'left.join', 'right.join', 'inner.join', 'outer.join'
+
+-   left_join', 'right_join', 'inner_join', 'outer_join'
+
+#### 'dplyr' working example using Cars (mpg) dataset
+
+```{r}
+head(mpg,10) %>% knitr::kable()
+```
+
+#### 'dplyr' working example using Iris (flower petal) dataset
+
+```{r}
+head(iris, 5) %>% knitr::kable()
+```
+
+#### Examples of different functions:
+
+1.  Select - selects a subset of the columns
+
+```{r}
+mpg %>%
+  select(c(model, displ, class)) %>%
+  knitr::kable()
+```
+
+2.  Mutate - creates new columns from existing rows
+
+```{r}
+iris %>%
+  mutate(Sepal_Area = Sepal.Length * Sepal.Width) %>%
+  knitr::kable()
+```
+
+3.  Filter -
+
+```{r}
+mpg %>%
+  filter(class == "compact") %>%
+  knitr::kable()
+```
+
+### ggplot2
+
+The 'gg' in 'ggplot2' stands for **G**rammar for **G**raphics
+
+#### Examples of ggplot2
+
+```{r}
+library(ggplot2)
+plt <- ggplot(iris)
+#To add points to graph
+plt + geom_point(aes(x=Petal.Length, y=Sepal.Length))
+```
+
+If we wish to add trend lines to the points on the graph:
+
+```{r}
+plt + geom_point(aes(x=Petal.Length, y=Sepal.Length, color=Species)) + geom_smooth(aes(x=Petal.Length, y=Sepal.Length), method=lm)
+```
+
+## Thursday, Jan 26
+
+::: callout-important
 ## TIL
 
-Include a _very brief_ summary of what you learnt in this class here. 
+Include a *very brief* summary of what you learnt in this class here.
 
 Today, I learnt the following concepts in class:
 
-1. Item 1
-1. Item 2
-1. Item 3
+1.  ggThemeAssist
+2.  More on data types
+3.  Factors
+4.  purrr
 :::
 
-Provide more concrete details here, e.g., 
+### ggThemeAssist
 
-In class we learnt how to use the `map` function to create multiple regression diagnostic plots
+'ggThemeAssist' helps in easily modifying different characteristics of a plot.
 
-```{R results='hide', fig.height=4}
-par(mfcol=c(2, 3), mar=c(3.5, 3.5, 2, 1), mgp=c(2.4, 0.8, 0))
-mtcars %>%
-  split(.$cyl) %>%
-  map(~ lm(mpg ~ wt, data = .x)) %>%
-  map(function(x)plot(x, which=c(1, 2)))
+```{r}
+library(ggThemeAssist)
+library(ggplot2)
+
+ggplot(mpg) +
+  geom_point(aes(x=displ, y=hwy))+labs(title = "Plot of Displacement v Highway Miles per Gallon")
 ```
 
+### Data Types
 
-[^footnote]: You can include some footnotes here
+1.  String, Eg: 'r x \<- "this is a character"; x'
+2.  Integer, Eg: '\[1, 2, 3\]'
+3.  Double, Eg: '\[2.3, 3.14159, 0.9\]'
+4.  Booleans, Eg: 'TRUE/FALSE'
+
+### What are factors?
+
+-   Factors are categorical variables
+-   'var' contains the country code for people in North America
+
+```{r}
+var <- c(
+  "USA",
+  "USA",
+  "CAN",
+  "CAN",
+  "CAN",
+  "CAN",
+  "MEX",
+  "MEX"
+)
+```
+
+To tell 'R' that this is explicitly categorcial and not just a vector of strings, you have to specify the following:
+
+```{r}
+as.factor(var)
+```
+
+Another Example:
+
+```{r}
+head(iris, 3) %>%
+  knitr::kable()
+
+iris$Species
+```
+
+Similarly, if we look at 'mpg'
+
+```{r}
+head(mpg, 3) %>% knitr::kable()
+```
+
+Lets have a look at 'class'
+
+```{r}
+as.factor(mpg$class)
+```
+
+This is where the 'forcats' package is really useful:
+
+```{r}
+library(forcats)
+manufacturer <- as.factor(mpg$manufacturer)
+fct_reorder(manufacturer, mpg$hwy, min)
+```
+
+### purrr
+
+This package provides a set of functional programming tools. Its best illustrated through an example:
+
+Consider the following procedure: We want to
+
+1.  Filter 'iris' by species
+2.  Compute the 'Sepal.Area' as 'Sepal.Length' $\times$ 'Sepal.Width'
+3.  Find the average of 'Sepal.Area' for every flower in the species
+
+```{r}
+iris %>%
+  mutate(Sepal.Area = Sepal.Length * Sepal.Width) %>%
+  group_by() %>%
+  summarize()
+```
+
+Consider the following task:
+
+1.  Take a number 'i' from $1 \dots 10$
+2.  Create a matrix with random entries of dimension 'i' $\times$ 'i'
+3.  Compute the average of the elements of the matrix
+4.  Print it
+
+```{r}
+results <- c()
+for (i in 1:10){
+  M <- matrix(
+    runif(i*i), nrow=1
+  )
+  results[i] <- mean(M)
+}
+results
+```
+
+A functional way to think of this is as follows:
+
+$i \rightarrow M_{i \times i} \rightarrow mean(M)$\$
+
+```{r}
+library(purrr)
+map(
+  1:10,
+  function(i){
+    mean(
+      matrix(
+        runif(i * i), nrow=1
+      )
+    )
+  }
+)
+```
